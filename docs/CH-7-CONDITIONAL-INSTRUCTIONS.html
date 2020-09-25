@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>6502 ASSEMBLY NOTES</title>
+<title>CH-7-CONDITIONAL-INSTRUCTIONS</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -9129,15 +9129,15 @@ label {
 }
 /* Flexible box model classes */
 /* Taken from Alex Russell http://infrequently.org/2009/08/css-3-progress/ */
-/* This file is a compatability layer.  It allows the usage of flexible box
+/* This file is a compatability layer.  It allows the usage of flexible box 
 model layouts accross multiple browsers, including older browsers.  The newest,
 universal implementation of the flexible box model is used when available (see
-`Modern browsers` comments below).  Browsers that are known to implement this
+`Modern browsers` comments below).  Browsers that are known to implement this 
 new spec completely include:
 
     Firefox 28.0+
     Chrome 29.0+
-    Internet Explorer 11+
+    Internet Explorer 11+ 
     Opera 17.0+
 
 Browsers not listed, including Safari, are supported via the styling under the
@@ -12519,7 +12519,7 @@ div#pager .ui-resizable-handle {
   background: #f7f7f7;
   border-top: 1px solid #cfcfcf;
   border-bottom: 1px solid #cfcfcf;
-  /* This injects handle bars (a short, wide = symbol) for
+  /* This injects handle bars (a short, wide = symbol) for 
         the resize handle. */
 }
 div#pager .ui-resizable-handle::after {
@@ -13033,14 +13033,14 @@ div#notebook {
   div.cell {
     display: block;
     page-break-inside: avoid;
-  }
-  div.output_wrapper {
+  } 
+  div.output_wrapper { 
     display: block;
-    page-break-inside: avoid;
+    page-break-inside: avoid; 
   }
-  div.output {
+  div.output { 
     display: block;
-    page-break-inside: avoid;
+    page-break-inside: avoid; 
   }
 }
 </style>
@@ -13077,16 +13077,453 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Notes and code solutions from the book <a href="https://www.amazon.in/Fernandez-Assembly-Language-Programming-Self-Teaching/dp/0471861200/ref=sr_1_2?dchild=1&keywords=6502+assembly+programming+language&qid=1598736848&sr=8-2">6502 Assembly Language Programming</a> by Judin N Fernandez, Donna N Tabler, and Ruth Ashley.</strong></p>
-<h2 style='text-align: center;'>TABLE OF CONTENTS</h2><ol style='font-size: 120%; font-weight: bold;'>
-    <li><a href="1-INTRODUCTION.html" target="_blank">INTRODUCTION</a></li><br>
-    <li><a href="2-NUMBER-SYSTEMS-AND-DATA-REPRESENTATION.html" target="_blank">NUMBER SYSTEM AND DATA REPRESENTATION</a></li><br>
-    <li><a href="3-INSTRUCTION-FORMAT.html" target="_blank">INSTRUCTION FORMAT</a></li><br>
-    <li><a href="4-OPERAND-FORMATS.html" target="_blank">OPERAND FORMATS</a></li><br>
-    <li><a href="5-ELEMENTARY-INSTRUCTION-SET.html" target="_blank">ELEMENTARY INSTRUCTION SET</a></li><br>
-    <li><a href="CH-6-ASSEMBLER-DIRECTIVES.html" target="_blank">ASSEMBLER DIRECTIVES</a></li><br>
-    <li><a href="CH-7-CONDITIONAL-INSTRUCTIONS.html" target="_blank">CONDITIONAL INSTRUCTIONS</a></li>
-</ol>
+<h1 id="Review-of-the-flags">Review of the flags<a class="anchor-link" href="#Review-of-the-flags">&#182;</a></h1><ul>
+<li>Seven of the eight bits are used as status flags. The seven status flags are:- sign, overflow, break, decimal mode, interrupt disable, zero, and carry.
+<br><br></li>
+<li>For conditional instructions sign, zero, and carry flags are used.</li>
+</ul>
+<h2 id="Zero-flag">Zero flag<a class="anchor-link" href="#Zero-flag">&#182;</a></h2><ul>
+<li>It is set (equal to 1) when a value becomes zero, otherwise it is turned off or cleared (equa to 0).
+<br><br></li>
+<li>It is set or cleared as the result of any command that changes the value in a register or that increments or decrements a memory location or as a result of certain other commands like compare.
+<br><br></li>
+<li>The zero or other flags aren't affected by branching and jumping instructions or moving data to memory.
+<br><br></li>
+<li>A zero result turns the zero flag on and a non-zero result turns it off.</li>
+</ul>
+<h2 id="Carry-flag">Carry flag<a class="anchor-link" href="#Carry-flag">&#182;</a></h2><ul>
+<li>The carry flag indicates whether an operation caused an overflow, i.e. whether the result is too large for the receiving byte.
+<br><br></li>
+<li>It is set after addition operation if a one is carried from MSB and may be lost.
+<br><br></li>
+<li>It is also set if a subtraction operation did not need to borrow in order to subtract the MSB.
+<br><br></li>
+<li>Otherwise it is cleared by any arithmetic operation except increment or decrement.
+<br><br></li>
+<li>It is also turned off or on by the CLC and SEC commands.
+<br><br></li>
+<li>The carry flag tells whether the result of an arithmetic operation has overflowed the accumulator.</li>
+</ul>
+<h2 id="Sign-flag">Sign flag<a class="anchor-link" href="#Sign-flag">&#182;</a></h2><ul>
+<li>The sign flag reflects the value of the MSB in the result field. If MSB is on the sign flag is set, if it is OFF then the sign flag is cleared.
+<br><br></li>
+<li>This is because most programmers like to reserve MSB as a sign bit, limiting the value in a byte to seven bits.
+<br><br></li>
+<li>IF sign bit is on, the value is negative, if it is off the value is positive.
+<br><br></li>
+<li>The sign flag duplicates information and can be tested by the conditional instructions.
+<br><br></li>
+<li>The sign flag is affected by any command that changes the value in a register or that increments or decrements a memory location.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Conditional-Jumps">Conditional Jumps<a class="anchor-link" href="#Conditional-Jumps">&#182;</a></h1><ul>
+<li>JMP is an unconditional jump because it doesn't depend on any condition.
+<br><br></li>
+<li>A conditional jump on the other hand jumps based on condition and if it is false then it moves to next instruction (this is called "fall through" to next instruction).
+<br><br></li>
+<li>The following is an example routine and its flow chart:-</li>
+</ul>
+<p><img src="images/conditional-routine.png"></p>
+<p><img src="images/conditional-flowchart.png"></p>
+<h2 id="Conditional-jump-instructions">Conditional jump instructions<a class="anchor-link" href="#Conditional-jump-instructions">&#182;</a></h2><ul>
+<li><strong>BEQ</strong> - Branch if EQual - Jump if the zero flag is on.
+<br><br></li>
+<li><strong>BNE</strong> - Branch Not Equal - Jump if the zero flag is off.
+<br><br></li>
+<li><strong>BCS</strong> - Branch if Carry Set - Jump if the carry flag is on.
+<br><br></li>
+<li><strong>BCC</strong> - Branch if Carry Clear - Jump if the carry flag is off.
+<br><br></li>
+<li><strong>BMI</strong> - Branch if MInus - Jump if sign flag is on.
+<br><br></li>
+<li><strong>BPL</strong> - Branch if PLus - Jump if sign flag is off.
+<br><br></li>
+<li><strong>BVS</strong> - Branch if oVerflow Set - Jump if overflow flag is on.
+<br><br></li>
+<li><strong>BVC</strong> - Branch if oVerflow Clear - Jump if the overflow flag is off.</li>
+</ul>
+<h2 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h2><p>1) Jump to ENDER if the decrement (DEX) results in zero:-</p>
+
+<pre><code>assembly
+BEQ ENDER</code></pre>
+<p>2) Jump to LOOP if the subtraction (SBC #10) results in a nonzero value:-</p>
+
+<pre><code>assembly
+BNE LOOP</code></pre>
+<p>3) Jump to NEGVAL if the input value (JSR INPUT) is negative:-</p>
+
+<pre><code>assembly
+BMI NEGVAL</code></pre>
+<p>4) Jump to OK if the subtraction (SBC MIND) results in a positive value:-</p>
+
+<pre><code>assembly
+BPL OK</code></pre>
+<p>5) Jump to TOOBIG if the addition (ADC \$10) results in a carry:-</p>
+
+<pre><code>assembly
+BCS TOOBIG</code></pre>
+<p>6) Jump to CYCLE if the addition (ADC HALF) does not overflow:-</p>
+
+<pre><code>assembly
+BCC CYCLE</code></pre>
+<p>7) Code a routine to branch to ERROR if the value in the accumulator is less than \$10:-</p>
+
+<pre><code>assembly
+SEC
+SBC #$10
+BCC ERROR</code></pre>
+<p>8) Code a routine to branch to TIMOUT if the value in the accumulator is greather than 'A':-</p>
+
+<pre><code>assembly
+SEC
+SBC #'B'
+BCS TIMOUT</code></pre>
+<h2 id="Branch-Instructions">Branch Instructions<a class="anchor-link" href="#Branch-Instructions">&#182;</a></h2><ul>
+<li>All the branch instructions require relative address operands.
+<br><br></li>
+<li>The assembler will compare the number of bytes from the current address to the label and use the appropriate number of bytes from the current address to the label and use the appropriate one-byte relative address to the operand. This is 40 instructions approx in either directions.
+<br><br></li>
+<li>One way to skip over 40 instructions is to use an unconditional jump right after the conditional jump and if the conditional jump succeeds then skip the unconditional jump otherwise execute it:-</li>
+</ul>
+
+<pre><code>assembly
+        BEQ  CONTIN
+        JMP  START
+CONTIN  EQU  *</code></pre>
+<h2 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h2><p>1) Code a routine to read input from terminal until ASCII zero is found:-</p>
+
+<pre><code>assembly
+MIXER  EQU  *
+       JSR  INPUT
+       CLC
+       ADC  #1
+       JSR  OUTPUT
+       SEC
+       SBC  #'1'
+       BNE MIXER</code></pre>
+<p>2) Code a routine to read and echo characters until the user types a carriage return. Then let the control fall through to the next instruction:-</p>
+
+<pre><code>assembly
+ECHO  EQU  *
+      JSR  INPUT
+      JSR  OUTPUT
+      SEC
+      SBC  $#0D
+      BNE  ECHO</code></pre>
+<p>3) Code a routine to execute loop five times:-</p>
+
+<pre><code>assembly
+        LDX  #5
+LOOP    EQU  *
+        first instruction
+        . . .
+        last instruction
+        DEX
+        BNE LOOP</code></pre>
+<p>4) Code a routine that will write the letter 'B' on the terminal three times then stop processing:-</p>
+
+<pre><code>assembly
+        LDX  #3
+        LDA  #'B'
+BTHREE  EQU  *
+        JSR  OUTPUT
+        DEX
+        BNE  BTHREE
+LOOP    JMP  LOOP</code></pre>
+<p>5) Code a routine to display number 0 through 9 on the terminal and then halt.</p>
+
+<pre><code>assembly
+        LDA  #0
+        LDX  #10
+ZETONI  EQU  *
+        JSR  OUTPUT
+        ADC  #1
+        DEX
+        BNE  ZETONI
+DONE    JMP  DONE</code></pre>
+<p>6) Write a loop that will accept a single digit from the terminal (no echo) and print that number of X's on the terminal, then stop. Assume that the input digit is between '1' and '9':-</p>
+
+<pre><code>assembly
+        JSR  INPUT
+        SEC
+        SBC  #30
+        TAX
+        LDA  #'X'
+DISP    EQU  *
+        JSR  OUTPUT
+        DEX
+        BNE  DISP
+DONE    JMP  DONE</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Sending-Messages">Sending Messages<a class="anchor-link" href="#Sending-Messages">&#182;</a></h1><ul>
+<li>Writing a message from storage:-</li>
+</ul>
+
+<pre><code>assembly
+        LDY  #22
+        LDX  #0
+OUTLP   EQU  *
+        LDA  MESSAG, X
+        JSR  OUTPUT
+        INX
+        DEY
+        BNE  OUTLP
+DONE    JMP  DONE
+MESSAG  ASC  'PLEASE TYPE YOUR NAME:'</code></pre>
+<ul>
+<li>Another way to control this loop would be store the last character ':'.</li>
+</ul>
+<h2 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h2><p>1) Code a routine to write the message 'THANK YOU' to the terminal and then halt:-</p>
+
+<pre><code>assembly
+        LDY  #9
+        LDX  #0
+OUTLP   EQU  *
+        LDA  MESSAG, X
+        JSR  OUTPUT
+        INX
+        DEY
+        BNE  OUTLP
+DONE    JMP  DONE
+MESSAG  ASC  'THANK YOU'</code></pre>
+<p>2) Code a routine that reads a message from the terminal. Store the message, but do not echo it. When the user types a carriage return, write the following:-</p>
+
+<pre><code>- carriage return and line feed (to start a new line)
+- the message
+- a question mark
+
+</code></pre>
+
+<pre><code>assembly
+ZERO    EQU  0
+INPUT   EQU  $FD0C     ; FOR APPLE
+OUTPUT  EQU  $FDED     ; FOR APPLE
+CR      EQU  $OD
+LF      EQU  $0A
+QMARK   EQU  '?'
+        ORG  $5000
+        LDX  #ZERO
+READIT  EQU  *
+        JSR  INPUT
+        STA  TEXTIN, X
+        INX
+        SEC
+        SBC  #CR
+        BNE  READIT
+        DEX
+        LDA  #QMARK
+        STA  TEXTIN, X
+        TXA
+        CLC
+        ADC  #3
+        TAY
+        LDX  #ZERO
+WRITEIT EQU  *
+        LDA  ANSWER, X
+        JSR  OUTPUT
+        INX
+        DEY
+        BNE  WRITEIT
+DONE    JMP  DONE
+ANSWER  DFB  CR, LF
+TEXTIN  DS   80</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Comparisons">Comparisons<a class="anchor-link" href="#Comparisons">&#182;</a></h1><ul>
+<li>A routine that reads and stores bytes from a terminal until a carriage return (\$0D) is encountered:-</li>
+</ul>
+
+<pre><code>assembly
+        LDX  #0
+READIT  EQU  *
+        JSR  INPUT
+        STA  SAVE, X
+        INX
+        SEC
+        SBC  #$0D
+        BNE  READIT</code></pre>
+<ul>
+<li>This routine saves the CR too.
+<br><br></li>
+<li>The following approach does not store the CR:-</li>
+</ul>
+
+<pre><code>assembly
+        LDX  #0
+READIT  EQU  *
+        JSR  INPUT
+        TAY            ; PRESERVE BYTE IN Y
+        SEC
+        SBC  #$0D
+        BEQ  NOMORE
+        TYA            ; STORE PRESERVED BYTE
+        INX
+        JMP  READIT</code></pre>
+<ul>
+<li>Another way to accomplish this is:-</li>
+</ul>
+
+<pre><code>assembly
+        LDX  #0
+READIT  EQU  *
+        JSR  INPUT
+        CMP  #$0D
+        BEQ  NOMORE
+        STA  TEXTIN, X
+        INX
+        JMP  READIT
+NOMORE  EQU  *</code></pre>
+<ul>
+<li>Here CMP instruction stands for CoMPare. It compares value in the accumulator with the byte addressed by the operand and treats the flags accordingly.
+<br><br></li>
+<li>It compares the values by pretending to subtract the byte from accumulator. The flags are set as if subtraction has taken place.</li>
+</ul>
+<h2 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h2><p>1) Write a set of instructions to compare the accumulator to \$50. If it does not equal \\$50, jump to NEXONE. If it does equal to \$50 let control fall through:-</p>
+
+<pre><code>assembly
+CMP  #$50
+BNE  NEXONE</code></pre>
+<p>2) Write a set of instructions to compare the accumulator to ASCII A. If it is equal to or greater than A, jump to LETTER. If it is less than A, let control fall through:-</p>
+
+<pre><code>assembly
+CMP  #'A'
+BCS  LETTER ; ANY VALUE SMALLER THAN 'A' WILL CAUSE A BORROW, THUS CLEARING CARRY FLAG</code></pre>
+<h2 id="CPX-and-CPY">CPX and CPY<a class="anchor-link" href="#CPX-and-CPY">&#182;</a></h2><ul>
+<li>ComPare to X register.
+<br><br></li>
+<li>ComPare to Y register.</li>
+</ul>
+<h3 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h3><p>1) Write a set of instructions to compare the X register with the Y register:-</p>
+
+<pre><code>assembly
+STX SAVE
+CPY SAVE</code></pre>
+<p>2) Write a set of instructions to compare the accumulator to the X register:-</p>
+
+<pre><code>assembly
+STA SAVE
+CPX SAVE</code></pre>
+<p>3) Write a set of instructions to read a value from the terminal. If it is equal to the value in the X register, jump to SAMVAL. Otherwise, let control fall through:-</p>
+
+<pre><code>assembly
+JSR INPUT
+STA SAVE
+CPX SAVE
+BEQ SAMVAL</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Alternate-Paths">Alternate Paths<a class="anchor-link" href="#Alternate-Paths">&#182;</a></h1><ul>
+<li>In this structure a yes-no question is asked. If the answer is yes, one path is taken otherwise a different path is taken.
+<br><br></li>
+<li>An example is if we want to read and edit user's input. If the user types a digit between 0 and 9, we store the digit. If user types any other character we write an error message.
+<br><br></li>
+<li>In this the yes-no question is - Is the input value between 0 and 9 or Is the input value outside of the range of 0-9.
+<br><br></li>
+<li>The yes path is either - store the digit or write error message. Same for no path.
+<br><br></li>
+<li>In assembly, alternate paths are coded using comparisons and conditional jumps:-</li>
+</ul>
+
+<pre><code>assembly
+        JSR  INPUT
+        CMP  #5
+        BNE  NOTFIV
+FIVE    EQU  *
+        LDX  #0
+        JMP  OUTMSG
+NOTFIV  EQU  *
+        LDX  #5
+OUTMSG  EQU  *
+        LDY  #5
+OUTLOP  EQU  *
+        LDA  FIVMSG, X    ; IF INPUT IS 5 THEN X IS 0 AND IT STARTS PRINTING FIVMSG, OTHERWISE IT GOES TO NEXT
+                          ; MEMORY LOCATION I.E. NOTMSG AND STARTS PRINTING THAT
+        JSR  OUTPUT
+        INX
+        DEY
+        BNE  OUTLOP
+DONE    JMP  DONE
+FIVMSG  ASC  'RIGHT'
+NOTMSG  ASC  'WRONG'</code></pre>
+<h2 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h2><p>1) Write a routine to read and echo two characters from the terminal. If they are the same, write 'SAME', otherwise write 'DIFF':-</p>
+
+<pre><code>assembly
+        JSR  INPUT
+        JSR  OUTPUT
+        TAX
+        JSR  INPUT
+        JSR  OUTPUT
+        STX  SAVE
+        CMP  SAVE
+        BNE  DIFF
+SAME    EQU  *
+        LDX  #0
+        JMP  OUTMSG
+DIFF    EQU  *
+        LDX  #4
+OUTMSG  EQU  *
+        LDY  #4
+OUTLOP  EQU  *
+        LDA  SAMMSG, X
+        JSR  OUTPUT
+        INX
+        DEY
+        BNE  OUTLOP
+DONE    JMP  DONE
+SAVE    DS   1
+SAMMSG  ASC  'SAME'
+DIFMSG  ASC  'DIFF'</code></pre>
+<ul>
+<li>Sometimes yes or no path can have only the yes path:-</li>
+</ul>
+<p><img src="images/yes-no-no-no.png"></p>
+<ul>
+<li>A routine that reads a byte and if it isn't a space store it otherwise increment the X register, otherwise do nothing:-</li>
+</ul>
+
+<pre><code>assembly
+        JSR  INPUT
+        CMP  #' '
+        BEQ  NEXTEP
+NOTSPA  EQU  *
+        STA  SAVE, X
+        INX
+NEXTEP  EQU  *</code></pre>
+<h2 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h2><p>1) Code a routine that will read a byte and echo a byte. If it's a carriage return, also print write a line feed. Then store the byte in memory:-</p>
+
+<pre><code>assembly
+        JSR  INPUT
+        JSR  OUTPUT
+        TAY
+        CMP  #$0D
+        BNE  STORIT
+        LDA  #$0A
+        JSR  OUTPUT
+STORIT  EQU  *
+        STY  SAVE</code></pre>
+
 </div>
 </div>
 </div>
@@ -13094,7 +13531,7 @@ div#notebook {
   </div>
 </body>
 
-
+ 
 
 
 </html>
