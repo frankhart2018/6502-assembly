@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>6502 ASSEMBLY NOTES</title>
+<title>CH-9-THE-STACK</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -9129,15 +9129,15 @@ label {
 }
 /* Flexible box model classes */
 /* Taken from Alex Russell http://infrequently.org/2009/08/css-3-progress/ */
-/* This file is a compatability layer.  It allows the usage of flexible box
+/* This file is a compatability layer.  It allows the usage of flexible box 
 model layouts accross multiple browsers, including older browsers.  The newest,
 universal implementation of the flexible box model is used when available (see
-`Modern browsers` comments below).  Browsers that are known to implement this
+`Modern browsers` comments below).  Browsers that are known to implement this 
 new spec completely include:
 
     Firefox 28.0+
     Chrome 29.0+
-    Internet Explorer 11+
+    Internet Explorer 11+ 
     Opera 17.0+
 
 Browsers not listed, including Safari, are supported via the styling under the
@@ -12519,7 +12519,7 @@ div#pager .ui-resizable-handle {
   background: #f7f7f7;
   border-top: 1px solid #cfcfcf;
   border-bottom: 1px solid #cfcfcf;
-  /* This injects handle bars (a short, wide = symbol) for
+  /* This injects handle bars (a short, wide = symbol) for 
         the resize handle. */
 }
 div#pager .ui-resizable-handle::after {
@@ -13033,14 +13033,14 @@ div#notebook {
   div.cell {
     display: block;
     page-break-inside: avoid;
-  }
-  div.output_wrapper {
+  } 
+  div.output_wrapper { 
     display: block;
-    page-break-inside: avoid;
+    page-break-inside: avoid; 
   }
-  div.output {
+  div.output { 
     display: block;
-    page-break-inside: avoid;
+    page-break-inside: avoid; 
   }
 }
 </style>
@@ -13077,18 +13077,96 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Notes and code solutions from the book <a href="https://www.amazon.in/Fernandez-Assembly-Language-Programming-Self-Teaching/dp/0471861200/ref=sr_1_2?dchild=1&keywords=6502+assembly+programming+language&qid=1598736848&sr=8-2">6502 Assembly Language Programming</a> by Judin N Fernandez, Donna N Tabler, and Ruth Ashley.</strong></p>
-<h2 style='text-align: center;'>TABLE OF CONTENTS</h2><ol style='font-size: 120%; font-weight: bold;'>
-    <li><a href="1-INTRODUCTION.html" target="_blank">INTRODUCTION</a></li><br>
-    <li><a href="2-NUMBER-SYSTEMS-AND-DATA-REPRESENTATION.html" target="_blank">NUMBER SYSTEM AND DATA REPRESENTATION</a></li><br>
-    <li><a href="3-INSTRUCTION-FORMAT.html" target="_blank">INSTRUCTION FORMAT</a></li><br>
-    <li><a href="4-OPERAND-FORMATS.html" target="_blank">OPERAND FORMATS</a></li><br>
-    <li><a href="5-ELEMENTARY-INSTRUCTION-SET.html" target="_blank">ELEMENTARY INSTRUCTION SET</a></li><br>
-    <li><a href="CH-6-ASSEMBLER-DIRECTIVES.html" target="_blank">ASSEMBLER DIRECTIVES</a></li><br>
-    <li><a href="CH-7-CONDITIONAL-INSTRUCTIONS.html" target="_blank">CONDITIONAL INSTRUCTIONS</a></li><br>
-    <li><a href="CH-8-LOGICAL-OPERATIONS.html" target="_blank">LOGICAL OPERATIONS</a></li><br>
-    <li><a href="CH-9-LOGICAL-OPERATIONS.html" target="_blank">THE STACK</a></li><br>
-</ol>
+<h1 id="Review-of-concepts">Review of concepts<a class="anchor-link" href="#Review-of-concepts">&#182;</a></h1><ul>
+<li>The stack is a LIFO (Last In First Out) storage area in memory used for temporary storage.
+<br><br></li>
+<li>The stack pointer register points to the position where the next item will be stored.
+<br><br></li>
+<li>The stack has a top and a bottom. The bottom is the highest memory address and the top is the lowest memory address. 
+<br><br></li>
+<li>The stack must be on page one and usually starts at address \$01FF and builds towards address \\$0100 as items are added to it.
+<br><br></li>
+<li>Since the stack is limited to page one it cannot store more than 256 bytes which is reserved in memory even when it isn't in use.
+<br><br></li>
+<li>JSR instruction uses stack too. 
+<br><br></li>
+<li>Most systems automatically start stack pointer to \$01FF but if it isn't it can be done using TXS (Transfer X to Stack pointer):-</li>
+</ul>
+
+<pre><code>assembly
+LDX #$FF
+TXS</code></pre>
+<ul>
+<li>The system assumes the \$01, so loading just \\$FF is fine.</li>
+</ul>
+<h2 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h2><p>1) Suppose you want to use a stack starting at address \$0199. Write instructions to load the SP correctly:-</p>
+
+<pre><code>assembly
+LDX #$99
+TXS</code></pre>
+<ul>
+<li>It is usually not a good idea to use page one for anything other than the stack.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="The-Push-and-Pull-instructions">The Push and Pull instructions<a class="anchor-link" href="#The-Push-and-Pull-instructions">&#182;</a></h1><ul>
+<li>A byte is added to the stack using a push instruction.
+<br><br></li>
+<li>PHA copies the accumulator to stack.
+<br><br></li>
+<li>PHP copies the status register into the stack.
+<br><br></li>
+<li>Neither PHA nor PHP have any operands and they do not affect any flags. After the copy is made SP is decremented to point to new top of the stack.
+<br><br></li>
+<li>An item is retrieved from the stack by a pull instruction.
+<br><br></li>
+<li>PLA pulls a byte into the accumulator.
+<br><br></li>
+<li>PLP pulls a byte into the status register.
+<br><br></li>
+<li>They don't have any operands. They affect zero and sign flags.
+<br><br></li>
+<li>When an item is pulled the stack pointer is positioned in a way that the next push will overlay the current value.</li>
+</ul>
+<h2 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h2><p>1) Write a routine that will stack the values of the X and Y registers, then call a subroutine named LOGON, then restore X and Y to their former values:-</p>
+
+<pre><code>assembly
+TXA
+PHA
+TYA
+PHA
+JSR LOGON
+PLA
+TAY
+PLA
+TAX</code></pre>
+<ul>
+<li>Since X and Y cannot be stacked directly it is better to save them in some memory location. But registers are safer in the stack.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="The-TSX-instruction">The TSX instruction<a class="anchor-link" href="#The-TSX-instruction">&#182;</a></h1><ul>
+<li>TSX allows the value of SP to be copied to X register.
+<br><br></li>
+<li>This has no operands. This affects sign and zero flags.</li>
+</ul>
+<h2 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h2><p>1) Write a routine to increment the SP by one. This will retrieve the SP to X increment it and replace it in SP:-</p>
+
+<pre><code>assembly
+TSX
+INX
+TXS</code></pre>
+
 </div>
 </div>
 </div>
@@ -13096,7 +13174,7 @@ div#notebook {
   </div>
 </body>
 
-
+ 
 
 
 </html>
