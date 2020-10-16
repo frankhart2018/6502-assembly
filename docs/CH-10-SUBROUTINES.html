@@ -13344,6 +13344,151 @@ TEST      EQU  *
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Exercise-Programs">Exercise Programs<a class="anchor-link" href="#Exercise-Programs">&#182;</a></h1><h2 id="Question-1">Question 1<a class="anchor-link" href="#Question-1">&#182;</a></h2><ul>
+<li>This subroutine writes out a message from the data area TEXT to an output device. The displacement for the first byte of the message is passed in the X register. The length of the message is passed in the Y register. Call the OUTPUT routine to actually write each byte:-</li>
+</ul>
+
+<pre><code>assembly
+WRITE    EQU  *
+         PHP
+         PHA
+OUTLOP   EQU  *
+         LDA  TEXT,X
+         JSR  OUTPUT
+         INX
+         DEY
+         BNE  OUTLOP
+         PLA
+         PLP
+         RTS</code></pre>
+<h2 id="Question-2">Question 2<a class="anchor-link" href="#Question-2">&#182;</a></h2><ul>
+<li>This subroutine reads, echos, and validates an incoming byte. A byte is valid if it is an upper case letter. If invalid, write the message WRONG -- TRY AGAIN. Continue reading until a valid byte is obtained. Leave the byte in the accumulator and return control. Use INPUT and OUTPUT subroutines to read and write single bytes. Call the subroutine you wrote for question 1 to write the message:-</li>
+</ul>
+
+<pre><code>assembly
+UPPERA    EQU  $41
+ZPLUS1    EQU  $5B
+GETLET    EQU  *
+          STY  SAVEX
+TRYONE    EQU  *
+          JSR  INPUT
+          JSR  OUTPUT
+          CMP  #UPPERA
+          BMI  ERROR
+          CMP  #ZPLUS1
+          BMI  OK
+ERROR     EQU  *
+          LDY  MESLNG
+          LDX  #0
+          JSR  WRITE
+          JMP  GETLET
+OK        EQU  *
+          LDY  SAVEY
+          RTS
+SAVEY     DS   1
+MESLNG    DFB  18
+TEXT      ASC  'WRONG -- TRY AGAIN'</code></pre>
+<h2 id="Question-3">Question 3<a class="anchor-link" href="#Question-3">&#182;</a></h2><ul>
+<li>This routine - not a subroutine - reads and stores an incoming message in memory. It should loop until the letter Z is read. That terminates the message (Store the Z). Each character of the incoming message should be read, echoed, and validated using the subroutine you wrote for question 2:-</li>
+</ul>
+
+<pre><code>assembly
+          LDX  #0
+READIN    EQU  *
+          STX  SAVEX
+          JSR  GETLET
+          LDX  SAVEX
+          STA  INMES,X
+          INX
+          CMP  #'Z'
+          BMI  READIN
+DONE      JMP  DONE
+INMES     DS   80</code></pre>
+<h2 id="Question-4">Question 4<a class="anchor-link" href="#Question-4">&#182;</a></h2><ul>
+<li>This subroutine writes one character from the accumulator on a printer. Use these features:-
+<br><br><ul>
+<li>Status byte at address \$C50F.
+<br><br></li>
+<li>MSB indicates output status, on for ready.
+<br><br></li>
+<li>Data byte at address \$C50A.</li>
+</ul>
+</li>
+</ul>
+
+<pre><code>assembly
+PRINT    EQU  *
+         STX  SAVEX
+         PHA
+         LDA  #%10000000
+TEST     EQU  *
+         BIT  $C50F
+         BEQ  TEST
+         PLA
+         STA  $C50A
+         LDX  #0
+         STX  $C50F
+         LDX  SAVEX
+         RTS</code></pre>
+<h2 id="Question-5">Question 5<a class="anchor-link" href="#Question-5">&#182;</a></h2><ul>
+<li>This subroutine reads one character from a keyboard. The terminal status byte is at \$DD1C. The first and second bits (LSB and LSB + 1) are on when a byte is ready to be read. The data byte is at address \\$DD1D. Put the character in the accumulator:-</li>
+</ul>
+
+<pre><code>assembly
+INPUT    EQU  *
+         STX  SAVEX
+         LDA  #%00000011
+TEST     EQU  *
+         BIT  $DD1C
+         BEQ  TEST
+         LDA  $DD1D
+         PHP
+         LDX  #0
+         STX  $DD1C
+         LDX  SAVEX
+         PLP
+         RTS</code></pre>
+<h2 id="Question-6">Question 6<a class="anchor-link" href="#Question-6">&#182;</a></h2><ul>
+<li>This subroutine prints text on the printer by calling the print subroutine you wrote for question 4. After each character is printed, check for an input byte from the terminal described in question 5 above. If any byte is input, discontinue printing. The following data is passed to a subroutine: (a) the beginning displacement of the text is in register X; (b) the length of the text is in register Y:-</li>
+</ul>
+
+<pre><code>assembly
+PTEX    EQU  *
+        LDA  TEXT,X
+        JSR  PRINT
+        LDA  #%00000011
+        BIT  $DD1C
+        BNE  ENDSUB
+        INX
+        DEY
+        BNE  PTEX
+ENDSUB  EQU  *
+        RTS</code></pre>
+<h2 id="Question-7">Question 7<a class="anchor-link" href="#Question-7">&#182;</a></h2><ul>
+<li>This routine causes the following message to be printed, preceded by form feed and carriage return:-
+<br><br>
+  NOW IS THE TIME FOR ALL GOOD PEOPLE TO COME TO THE AID OF THEIR PARTY.
+<br><br></li>
+<li>Use the subroutine you wrote for question 6 to print the text:-</li>
+</ul>
+
+<pre><code>assembly
+NOWPRN    EQU  *
+          LDY  #72
+          LDX  #0
+          JSR  PTEX
+DONE      JMP  DONE
+TEXT      DBF  $0D, $0A
+          ASC  'NOW IS THE TIME FOR ALL '
+          ASC  'GOOD PEOPLE TO COME TO THE '
+          ASC  'AID FOR THEIR PARTY.'</code></pre>
+
+</div>
+</div>
+</div>
     </div>
   </div>
 </body>
